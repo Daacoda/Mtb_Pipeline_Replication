@@ -1,0 +1,14 @@
+name: tbqc
+
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.13
+  - fastqc=0.12.1
+  - trimmomatic=0.39
+  - bwa
+  - samtools
+  - bcftools
