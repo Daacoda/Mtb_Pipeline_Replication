@@ -1,5 +1,0 @@
-Module	Section	Sample Name	Source
-FastQC	all_sections	SRR31065062_1	/home/ismail_the_dev/qc/pre_trim/SRR31065062_1_fastqc.zip
-FastQC	all_sections	SRR31065062_1_paired	/home/ismail_the_dev/qc/post_trim/SRR31065062_1_paired_fastqc.zip
-FastQC	all_sections	SRR31065062_2	/home/ismail_the_dev/qc/pre_trim/SRR31065062_2_fastqc.zip
-FastQC	all_sections	SRR31065062_2_paired	/home/ismail_the_dev/qc/post_trim/SRR31065062_2_paired_fastqc.zip
