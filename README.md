@@ -38,7 +38,7 @@ bash
     conda 25.5.1
 
 
-## Quality Control Workflow 
+# 7. Quality Control Workflow 
 The raw Illumina paired-end reads were subjected to quality control using FastQC and summarized with MultiQC. Adapter trimming and low-quality base removal were performed with Trimmomatic. The pipeline ensured that downstream analysis used only high-quality reads.
 
 
@@ -98,7 +98,7 @@ Based on the quality control analyses of the Mycobacterium tuberculosis SRR31065
 
 
 
-#PHASE2-ALIGHMENT, FILTERING AND TAXONOMIC CLASSIFICATION
+##PHASE2-ALIGHMENT, FILTERING AND TAXONOMIC CLASSIFICATION
 
 #MDR-TB Genomics Pipeline (Phase 2 - Alignment, filtering and taxonomic classification)
 This phase focuses on removing human and viral reads from metagenomic data and classifying bacterial sequences using Centrifuge for taxonomic profiling. All visualizations were performed using RStudio Server.
@@ -314,7 +314,7 @@ The sample is dominated by M.tuberculosis reads (>99% of classified bacterial re
 No viral contamination was detected against the small 10-virus DB (0 mapped reads); this likely reflects either absence of those viruses or the limited viral index used for this test.
 
 # Mapped vs Unmapped Reads Visualization
-![Mapped vs Unmapped Reads](aligment_taxclass_phase2/Rplots/Rplot_alignment_pie.png)
+![Mapped vs Unmapped Reads](aligment_taxclass_phase2/Rplots/Rplot_bar_ch_mapp_eff.png)
 
 Low taxonomic diversity as expected here because
         (1) subsampling to 200k pairs.

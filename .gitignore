@@ -1,40 +1,34 @@
-# ------------------------
-# Data folders (large inputs)
-# ------------------------
+# === PHASE 1: Raw data ===
 raw_reads/
 trimmed_reads/
 
-# ------------------------
-# Conda and environment files
-# ------------------------
+# === Conda / environment folders ===
 env/
 tbqc/
 
-# ------------------------
-# System files
-# ------------------------
+# === System files ===
 *.DS_Store
 
-# ------------------------
-# Intermediate pipeline outputs
-# ------------------------
+# === Intermediate alignments ===
 *.sam
 *.bam
 *.bai
+
+# === Temporary or log files ===
+*.log
+*.tmp
+
+# === Very large or redundant files ===
 *.fastq.gz
+*.fq.gz
+*.parquet
 
-# ------------------------
-# Large logs and reports (keep summary plots)
-# ------------------------
-*.zip
-*.gz
-*.html
-!*/Rplots/*.png
-!*/Rplots/*.pdf
+# === Ignore big reports not meant for Git (optional) ===
+# comment these if you want QC HTMLs visible
+# *.html
+# *.zip
 
-# ------------------------
-# RStudio and session files
-# ------------------------
+# === R temporary files ===
 .Rhistory
 .RData
 .Rproj.user/
