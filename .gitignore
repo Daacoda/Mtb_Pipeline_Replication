@@ -1,3 +1,41 @@
-# Ignore large raw and trimmed data
+# ------------------------
+# Data folders (large inputs)
+# ------------------------
 raw_reads/
 trimmed_reads/
+
+# ------------------------
+# Conda and environment files
+# ------------------------
+env/
+tbqc/
+
+# ------------------------
+# System files
+# ------------------------
+*.DS_Store
+
+# ------------------------
+# Intermediate pipeline outputs
+# ------------------------
+*.sam
+*.bam
+*.bai
+*.fastq.gz
+
+# ------------------------
+# Large logs and reports (keep summary plots)
+# ------------------------
+*.zip
+*.gz
+*.html
+!*/Rplots/*.png
+!*/Rplots/*.pdf
+
+# ------------------------
+# RStudio and session files
+# ------------------------
+.Rhistory
+.RData
+.Rproj.user/
+

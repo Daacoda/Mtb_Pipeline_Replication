@@ -1,0 +1,4 @@
+Sample,Total_Reads,Mapped_Reads,Mapped_Percent,Properly_paired,Singletons
+host_aln,400000,12199,3.05,11058,27
+host_aln_unmapped_pairs,387774,0,0.00,0,0
+vir_aln,387774,0,0.00,0,0
