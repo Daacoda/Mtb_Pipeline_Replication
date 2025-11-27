@@ -3,7 +3,7 @@ This phase focuses on removing human and viral reads from metagenomic data and c
 
 #This repository documents the step-by-step replication of Phase 2 from:
 
-#Comparative genomic analysis of multi-drug resistant Mycobacterium tuberculosis clinical isolates from Nigeria (PLOS ONE, 2021)
+#A bioinformatics pipeline for Mycobacterium tuberculosis sequencing that cleans contaminant reads from sputum samples
 
 
 
