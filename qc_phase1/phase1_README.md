@@ -1,73 +1,86 @@
-MDR-TB Genomics Pipeline (Phase 1 - QC)
+# MDR-TB Genomics Pipeline
 
-This repository documents the step-by-step replication of the pipeline from
+### Phase 1 – Quality Control (QC)
 
-##A bioinformatics pipeline for Mycobacterium tuberculosis sequencing that cleans contaminant reads from sputum samples
-link.. journals.plos.org/plosone/article?id=10.1371/journal.pone.0258774
+This repository documents the step-by-step replication of the pipeline from:
 
-## Environment Setup
-bash
+**A bioinformatics pipeline for Mycobacterium tuberculosis sequencing that cleans contaminant reads from sputum samples**  
+ [Link to article](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0258774)
 
-#1. Check conda is installed
-   conda --version
+---
 
-#2. Configure channels
-    conda config --add channels defaults
-    conda config --add channels bioconda
-    conda config --add channels conda-forge
-    conda config --set channel_priority strict
+##  Environment Setup
 
+```bash
+# 1. Check conda installation
+conda --version
+```
+# 2. Configure channels
+```bash
+conda config --add channels defaults
+conda config --add channels bioconda
+conda config --add channels conda-forge
+conda config --set channel_priority strict
+```
 # 3. Create project environment
-     conda create -n tbqc fastqc multiqc trimmomatic bwa samtools bcftools -y
-
-# 4. Activate the environment
-    conda activate tbqc
-
-# 5. Test tools
-    fastqc -h           #Quality control
-    multiqc -h          #Quality control
-    trimmomatic -h      #Quality control
-    bwa	                #Alignment tool
-    samtools            #Alignment file operations
-    bcftools            #Variant calling
-
+```bash
+conda create -n tbqc fastqc multiqc trimmomatic bwa samtools bcftools -y
+```
+# 4. Activate environment
+```bash
+conda activate tbqc
+```
+# 5. Verify tool versions
+```bash
+fastqc -h
+multiqc -h
+trimmomatic -h
+bwa
+samtools
+bcftools
+```
 # 6. Tools Versions
+   ```bash
     FastQC v0.12.1
     multiqc, version 1.30
     Trimmomatic v0.39
     conda 25.5.1
+   ```
 
-
-## Quality Control Workflow 
+# 7. Quality Control Workflow 
 The raw Illumina paired-end reads were subjected to quality control using FastQC and summarized with MultiQC. Adapter trimming and low-quality base removal were performed with Trimmomatic. The pipeline ensured that downstream analysis used only high-quality reads.
 
 
 After activating the environment:
 
-```bash
-
 # 1. Run FastQC on raw reads
-  fastqc raw_data/*.fastq.gz -o qc/pre_trim/
-
+```bash
+fastqc raw_data/*.fastq.gz -o qc/pre_trim/
+```
 # 2. Summarize results with MultiQC
-  multiqc qc/pre_trim/ -o qc/pre_trim/
-
+```bash
+multiqc qc/pre_trim/ -o qc/pre_trim/
+```
 # 3. Trim adapters and low-quality reads
-  trimmomatic PE -threads 4 -phred33 \
+```bash
+trimmomatic PE -threads 4 -phred33 \
   raw_data/sample_R1.fastq.gz raw_data/sample_R2.fastq.gz \
   qc/sample_R1_paired.fq.gz qc/sample_R1_unpaired.fq.gz \
   qc/sample_R2_paired.fq.gz qc/sample_R2_unpaired.fq.gz \
   ILLUMINACLIP:/path/to/Trimmomatic/adapters/TruSeq3-PE.fa:2:30:10 \
   LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-
+```
 # 4. Run FastQC again on trimmed reads
-  fastqc qc/*_paired.fq.gz -o qc/post_trim/
-
+```bash
+fastqc qc/*_paired.fq.gz -o qc/post_trim/
+```
 # 5. Summarize post-trim QC with MultiQC
-  multiqc qc/post_trim/ -o qc/post_trim/
+```bash
+multiqc qc/post_trim/ -o qc/post_trim/
+```
 
 
-#QC Summary (Biological Interpretation)
+# QC Summary (Biological Interpretation)
 
 Based on the quality control analyses of the Mycobacterium tuberculosis SRR31065062 sequencing data:
 
@@ -93,4 +106,3 @@ Based on the quality control analyses of the Mycobacterium tuberculosis SRR31065
 *The dataset maintains biological fidelity, reflecting the characteristics of M. tuberculosis without evidence of major contamination.
 
 ##All QC and trimming commands are saved in `scripts/qc_commands.sh` for reproducibility.
-
