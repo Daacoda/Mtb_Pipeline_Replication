@@ -2,7 +2,7 @@ MDR-TB Genomics Pipeline (Phase 1 - QC)
 
 This repository documents the step-by-step replication of the pipeline from
 
-##Comparative genomic analysis of multi-drug resistant Mycobacterium tuberculosis clinical isolates from Nigeria (PLOS ONE, 2021)
+##A bioinformatics pipeline for Mycobacterium tuberculosis sequencing that cleans contaminant reads from sputum samples
 link.. journals.plos.org/plosone/article?id=10.1371/journal.pone.0258774
 
 ## Environment Setup
