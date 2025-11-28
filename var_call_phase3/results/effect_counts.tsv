@@ -1,0 +1,8 @@
+missense_variant	624
+frameshift_variant	58
+stop_gained	10
+stop_lost&splice_region_variant	4
+disruptive_inframe_deletion	4
+conservative_inframe_deletion	3
+conservative_inframe_insertion	2
+missense_variant&conservative_inframe_insertion	1
