@@ -1,333 +1,153 @@
-MDR-TB Genomics Pipeline (Phase 1 - QC)
+```markdown
+# A Reproducible Low-Resource Workflow for NGS Variant Detection in *Mycobacterium tuberculosis*
 
-This repository documents the step-by-step replication of the pipeline from
+**Author:** Olawuyi Samuel Babatunde  
+**Location:** Ilorin, Nigeria  
+**Repository:** https://github.com/Daacoda/Mtb_Pipeline_Replication  
+**Date:** November 2025  
 
-##Comparative genomic analysis of multi-drug resistant Mycobacterium tuberculosis clinical isolates from Nigeria (PLOS ONE, 2021)
-link.. journals.plos.org/plosone/article?id=10.1371/journal.pone.0258774
+---
 
-## Environment Setup
-bash
+## Overview
 
-#1. Check conda is installed
-   conda --version
+This repository contains a lightweight, fully reproducible workflow for processing next-generation sequencing (NGS) data and detecting genomic variants in *Mycobacterium tuberculosis*.  
+The workflow is designed for **low-resource environments**, using standard, accessible tools and subsampling strategies to reduce computational load.  
+It serves as a **training-focused pipeline** for students developing practical skills in microbial genomics and bioinformatics.
 
-#2. Configure channels
-    conda config --add channels defaults
-    conda config --add channels bioconda
-    conda config --add channels conda-forge
-    conda config --set channel_priority strict
+---
 
-# 3. Create project environment
-     conda create -n tbqc fastqc multiqc trimmomatic bwa samtools bcftools -y
+## Objective
 
-# 4. Activate the environment
-    conda activate tbqc
+To implement a reproducible and resource-efficient pipeline for:
 
-# 5. Test tools
-    fastqc -h           #Quality control
-    multiqc -h          #Quality control
-    trimmomatic -h      #Quality control
-    bwa	                #Alignment tool
-    samtools            #Alignment file operations
-    bcftools            #Variant calling
+- Quality control  
+- Read filtering  
+- Taxonomic profiling  
+- Variant calling and annotation  
 
-# 6. Tools Versions
-    FastQC v0.12.1
-    multiqc, version 1.30
-    Trimmomatic v0.39
-    conda 25.5.1
+…using accessible tools suitable for low-power systems.
 
+---
 
-# 7. Quality Control Workflow 
-The raw Illumina paired-end reads were subjected to quality control using FastQC and summarized with MultiQC. Adapter trimming and low-quality base removal were performed with Trimmomatic. The pipeline ensured that downstream analysis used only high-quality reads.
+## Methods (Summary)
 
+- **Dataset:** Public MTB sequencing dataset (SRR31065062).  
+- **QC:** FastQC + Trimmomatic for high-quality reads (Phred ≥30).  
+- **Subsampling:** 400,000 total reads (200k pairs) using Seqtk to reduce compute usage.  
+- **Filtering & Alignment:** Removal of human/viral reads and alignment to MTB reference genome using BWA.  
+- **Taxonomic Profiling:** Centrifuge classification to confirm MTB majority and evaluate filtering.  
+- **Variant Calling:** FreeBayes + bcftools filtering.  
+- **Annotation:** SnpEff classification by impact (HIGH, MODERATE, LOW) and effect type.  
+- **Reproducibility:** All phases documented with scripts and environment files.
 
-After activating the environment:
+---
+
+## Results (Summary)
+
+- **High-quality reads retained**, with GC content consistent with MTB (~64%).  
+- **>99%** of filtered reads classified as *Mycobacterium tuberculosis*.  
+- **706 functional variants detected**, including:  
+  - **72 HIGH-impact variants**  
+  - **634 MODERATE-impact variants**  
+- Variants included frameshift, stop-gained, and missense mutations across diverse coding genes.  
+- All output tables (TSV, HTML) and scripts are available for verification.
+
+---
+
+## Significance
+
+- Demonstrates a **fully reproducible, low-resource MTB workflow**.  
+- Provides practical experience in QC, alignment, filtering, annotation, and Bash automation.  
+- Useful for **bioinformatics training**, capacity building, and postgraduate research preparation.  
+- Highlights how meaningful variant analysis can be achieved on modest hardware.
+
+---
+
+## Limitations
+
+- Subsampling reduces sensitivity to low-frequency variants.  
+- Small bacterial/viral reference panels limit broad microbial detection.  
+- Workflow is **training-oriented**, not intended for clinical or large-scale discovery analysis.
+
+---
+
+## Repository Structure
+
+```
+
+Mtb_Pipeline_Replication/
+│
+├── README.md
+├── environment.yml
+├── project_report.txt
+│
+├── qc_phase1/
+│   ├── multiqc_report/
+│   ├── phase1_README.md
+│   └── post_trim/
+│
+├── aligment_taxclass_phase2/
+│   ├── alignment_summary.csv
+│   ├── centrifuge_bac_class_report.tsv
+│   ├── phase2_README.md
+│   │
+│   ├── Rplots/
+│   │   ├── Rplot_alignment_pie.pdf
+│   │   ├── Rplot_alignment_pie.png
+│   │   ├── Rplot_bar_ch_map_eff.pdf
+│   │   ├── Rplot_bar_ch_mapp_eff.png
+│   │   ├── tax_class_bar_plot.png
+│   │   └── tax_class_plot.pdf
+│   │
+│   └── bacteria_com25/
+│       ├── bac_downl.sh
+│       └── bacteria_25.fna
+│
+├── var_call_phase3/
+│   (Your final VCFs, snpEff annotation files, TSV extracts, etc.)
+│
+├── plots/
+│   ├── Rplot_bar_ch_mapp_eff.png
+│   ├── effect_count.png
+│   ├── fastqc_per_sequence_gc_content_plot.png
+│   ├── fastqc_per_sequence_quality_scores_plot.png
+│   ├── snpEff_summary.html
+│   └── tax_abun.png
+│
+└── scripts/
+    (All shell scripts used in the 3 phases)
+
+````
+
+---
+
+## Reproducible Environment
+
+To create the analysis environment:
 
 ```bash
-
-# 1. Run FastQC on raw reads
-  fastqc raw_data/*.fastq.gz -o qc/pre_trim/
-
-# 2. Summarize results with MultiQC
-  multiqc qc/pre_trim/ -o qc/pre_trim/
-
-# 3. Trim adapters and low-quality reads
-  trimmomatic PE -threads 4 -phred33 \
-  raw_data/sample_R1.fastq.gz raw_data/sample_R2.fastq.gz \
-  qc/sample_R1_paired.fq.gz qc/sample_R1_unpaired.fq.gz \
-  qc/sample_R2_paired.fq.gz qc/sample_R2_unpaired.fq.gz \
-  ILLUMINACLIP:/path/to/Trimmomatic/adapters/TruSeq3-PE.fa:2:30:10 \
-  LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-
-# 4. Run FastQC again on trimmed reads
-  fastqc qc/*_paired.fq.gz -o qc/post_trim/
-
-# 5. Summarize post-trim QC with MultiQC
-  multiqc qc/post_trim/ -o qc/post_trim/
-
-
-#QC Summary (Biological Interpretation)
-
-Based on the quality control analyses of the Mycobacterium tuberculosis SRR31065062 sequencing data:
-
-#Per-base quality (Phred scores)
-*Post-trimming reads exhibit median Phred scores ≥ 30, indicating very low base-calling errors (<0.1%).
-*This ensures high confidence in nucleotide calls, which is essential for alignment, variant detection, and downstream classification.
-
-#Adapter sequences
-*Raw reads contained Illumina adapter contamination, particularly at the 3′ ends.
-*Trimming successfully removed these adapters, preventing false alignments and improving the accuracy of downstream analyses.
-
-#Read length distribution
-*Trimming removed low-quality bases from read ends, resulting in slightly shorter reads.
-*The retained read lengths remain sufficient for genome coverage and robust taxonomic profiling.
-
-#GC content
-*Raw reads had a slightly lower GC content (~61%) due to low-quality AT-rich tails.
-*Post-trimming reads show GC content ~64%, closer to the expected M. tuberculosis genome (~65%).
-*This confirms that trimming enriches for true biological sequences and reduces sequencing artifacts.
-
-#Overall data integrity
-*No excessive duplication or abnormal sequence patterns detected after trimming.
-*The dataset maintains biological fidelity, reflecting the characteristics of M. tuberculosis without evidence of major contamination.
-
-##All QC and trimming commands are saved in `scripts/qc_commands.sh` for reproducibility.
-
-
-
-
-
-##PHASE2-ALIGHMENT, FILTERING AND TAXONOMIC CLASSIFICATION
-
-#MDR-TB Genomics Pipeline (Phase 2 - Alignment, filtering and taxonomic classification)
-This phase focuses on removing human and viral reads from metagenomic data and classifying bacterial sequences using Centrifuge for taxonomic profiling. All visualizations were performed using RStudio Server.
-
-#This repository documents the step-by-step replication of Phase 2 from:
-
-#Comparative genomic analysis of multi-drug resistant Mycobacterium tuberculosis clinical isolates from Nigeria (PLOS ONE, 2021)
-
-
-
-# 1. Environment Setup
-Phase 2 builds upon the tbqc Conda environment created in Phase 1, with additional R and visualization dependencies.
-
-# Activate environment
+conda env create -f environment.yml
 conda activate tbqc
+````
 
-# bwa (for mapping reads to host/viral genomes)
-conda install -c bioconda bwa -y
+---
 
-# seqtk (for subsampling reads)
-conda install -c bioconda seqtk -y
+## Tools Used
 
-# centrifuge (for taxonomic classification)
-conda install -c bioconda centrifuge -y
+* FastQC
+* Trimmomatic
+* Seqtk
+* BWA
+* Samtools / Bcftools
+* FreeBayes
+* Centrifuge
+* SnpEff / SnpSift
+* MultiQC
 
-# ncbi-datasets-cli (download bacterial genomes)
-conda install -c conda-forge ncbi-datasets-cli -y
+---
 
+## License
 
-#2. Test tools
-bwa          #Aignment tool
-seqtk        #subsampling tool
-Centrifuge   #taxonomic classification
-datasets     #download genomes
+This project is open for educational and research purposes.
 
-
-#3. Tools Versions
-bwa v0.7.19-r1273
-seqtk Version: 1.5-r133
-Centrifuge version 1.0.4
-datasets version: 18.7.0
-
-
-# 4. Subsampling Reads with Seqtk
-#Subsample 200,000 paired-end reads
-seqtk sample -s42 <(zcat trimmed_reads/*_1_p*.fastq.gz) 200000 | gzip > sub_R1.fastq.gz
-seqtk sample -s42 <(zcat trimmed_reads/*_2_p*.fastq.gz) 200000 | gzip > sub_R2.fastq.gz
-
-
-# 5. Host Genome Removal (Human GRCh38)
-# Download the latest GRCh38.p14 human reference genome from NCBI
-wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.40_GRCh38.p14/GCF_000001405.40_GRCh38.p14_genomic.fna.gz
-
-# Unzip the genome file
-gunzip GCF_000001405.40_GRCh38.p14_genomic.fna.gz# 3. Host Genome Removal (Human GRCh38)
-
-#Index the human genome
-bwa index GCF_000001405.40_GRCh38.p14_genomic.fna
-
-# Map subsampled reads to human genome
-bwa mem GCF_000001405.40_GRCh38.p14_genomic.fna sub_R1.fastq.gz sub_R2.fastq.gz > host_aln.sam
-
-# Convert SAM → BAM
-samtools view -S -b host_aln.sam > host_aln.bam
-
-# Alignment stats
-samtools flagstat host_aln.bam
-
-# Sort and extract unmapped pairs
-samtools sort -n -@2 -o host_aln_namesorted.bam host_aln.bam
-samtools view -b -f 12 -F 256 host_aln_namesorted.bam > host_aln_unmapped_pairs.bam
-samtools fastq -1 host_cleaned_R1.fastq.gz -2 host_cleaned_R2.fastq.gz -0 /dev/null -s /dev/null -n host_aln_unmapped_pairs.bam
-
-
-# 6. Viral Decontamination
-For hardware constraints, 10 common human viruses were used for practice.
-
-# Run the script
-./vir_gen.sh
-
-# Index the 10 viral genomes
-bwa index sub_vir10.fasta
-
-# Map reads to viral reference
-bwa mem viral_human_sub10/sub_vir10.fasta host_cleaned_R1.fastq.gz host_cleaned_R2.fastq.gz > vir_aln.sam
-samtools view -bS vir_aln.sam > vir_aln.bam
-samtools flagstat vir_aln.bam
-
-# Extract host+virus-unmapped reads
-samtools view -b -f 12 -F 256 vir_aln.bam > vir+host_unmapped.bam
-samtools fastq -1 bac_input_R1.fastq.gz -2 bac_input_R2.fastq.gz -0 /dev/null -s /dev/null -n vir+host_unmapped.bam
-
-
-# 7. Bacterial Classification Using Centrifuge
-i chose the the top 25 bacteria that were discovered from the journal due to hardware constraints
-
-# Run the bacterial genome download script
-./bac_downl.sh
-
-# Extract accession numbers
-grep "^>" bacteria_com25/bacteria_25.fna | cut -d' ' -f1 | sed 's/^>//' > bacteria_accessions.txt
-
-# Run the conversion table generator script
-./conv_table.sh
-
-# Download and extract taxonomy files
-wget https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz
-mkdir taxdump
-tar -xvzf taxdump.tar.gz -C taxdump
-
-# Build Centrifuge index
-centrifuge-build \
-    -p 4 \
-    --conversion-table conversion_table.txt \
-    --taxonomy-tree taxdump/nodes.dmp \
-    --name-table taxdump/names.dmp \
-    bacteria_com25/bacteria_25.fna \
-    bacteria_index
-
-# Run Centrifuge classification
-centrifuge -x bacteria_index \
-    -1 bac_input_R1.fastq.gz \
-    -2 bac_input_R2.fastq.gz \
-    -S centrifuge_bac_class_output.txt \
-    --report-file centrifuge_bac_class_report.tsv \
-    -p 4
-
-
-# 8. Alignment Summary Report
-
-# Create alignment summary (from terminal)
-echo "Sample,Total_Reads,Mapped_Reads,Mapped_Percent,Properly_paired,Singletons
-host_aln,400000,12199,3.05,11058,27
-host_aln_unmapped_pairs,387774,0,0.00,0,0
-vir_aln,387774,0,0.00,0,0" > alignment_summary.csv
-
-
-
-# 9. Visualization in RStudio Server
-
-# RStudio Server Setup
-Visualization was performed using RStudio Server running inside Ubuntu (WSL).
-
-# Load libraries
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(readr)
-
-
-# Alignment Summary (Mapped vs Unmapped Reads)
-mydata <- read.csv("alignment_summary.csv")
-
-# Data cleaning
-str(mydata)
-summary(mydata)
-head(mydata)
-
-# Add Unmapped Reads column
-mydata_long <- mydata %>%
-  mutate(Unmapped_Reads = Total_Reads - Mapped_Reads) %>%
-  pivot_longer(cols = c(Mapped_Reads, Unmapped_Reads),
-               names_to = "Category",
-               values_to = "Reads")
-
-# Stacked Bar Chart
-ggplot(mydata_long, aes(x = Sample, y = Reads, fill = Category)) +
-  geom_bar(stat = "identity", position = "stack") +
-  theme_minimal() +
-  labs(title = "Mapped vs Unmapped Reads",
-       y = "Number of Reads",
-       x = "Sample")
-
-# Percentage Pie Chart
-mydata_long_pct <- mydata_long %>%
-  group_by(Sample) %>%
-  mutate(Percent = Reads / sum(Reads) * 100)
-
-ggplot(mydata_long_pct, aes(x = "", y = Percent, fill = Category)) +
-  geom_bar(stat = "identity", width = 1) +
-  coord_polar(theta = "y") +
-  facet_wrap(~Sample) +
-  theme_void() +
-  labs(title = "Mapped vs Unmapped Reads (%)")
-
-
-
-# Bacterial Taxonomic Abundance
-class_data <- read_tsv("centrifuge_bac_class_report.tsv")
-
-# Clean and sort
-df_class_data <- class_data %>%
-  select(name, numReads, abundance) %>%
-  arrange(desc(abundance))
-
-# Horizontal Bar Chart
-ggplot(df_class_data, aes(x = reorder(name, abundance), y = abundance, fill = name)) +
-  geom_col() +
-  coord_flip() +
-  labs(
-    title = "Taxonomic Abundance",
-    x = "Organism",
-    y = "Abundance"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "none")
-
-
-#Results
-
-The sample is dominated by M.tuberculosis reads (>99% of classified bacterial reads), consistent with the dataset and the selected reference panel.
-
-No viral contamination was detected against the small 10-virus DB (0 mapped reads); this likely reflects either absence of those viruses or the limited viral index used for this test.
-
-# Mapped vs Unmapped Reads Visualization
-![Mapped vs Unmapped Reads](aligment_taxclass_phase2/Rplots/Rplot_bar_ch_mapp_eff.png)
-
-Low taxonomic diversity as expected here because
-        (1) subsampling to 200k pairs.
-        (2) the intentionally limited bacterial reference set (25 genomes) used for replication.
-
-The pipeline successfully removed host and viral reads and produced a reproducible bacterial classification result ready for downstream variant calling or further analyses.
-
-
-#Limitations
-
- Subsampling and a small reference DB reduce sensitivity to low-abundance taxa — results are appropriate for pipeline demonstration and CV/portfolio use but not for publishing large-scale microbiome claims.
- SURPI-style edit-distance sweeps were not performed here due to index scope and compute constraints (not required to demonstrate the pipeline logic).
-
-
-
-#NEXT (VARIANT CALLING) to be added soon...
+```
