@@ -56,6 +56,7 @@ To develop a fully reproducible NGS pipeline for quality control, taxonomic prof
 
 **Plots:**
 ![Mapped vs Unmapped Reads](plots/Rplot_bar_ch_mapp_eff.png)
+
 ---
 
 ### Phase 3 – Variant Calling and Annotation
@@ -115,7 +116,5 @@ This project demonstrates a complete, reproducible NGS workflow for *M. tubercul
 ## Limitations
 - Subsampling reduces coverage and sensitivity to low-frequency variants.  
 - Small viral and bacterial reference panels limit detection of other microbes.  
-- Pipeline intended for methodological training, not for novel biological discovery.  
-
----
+- Pipeline intended for methodological training, not for novel biological discovery.
 
