@@ -44,7 +44,7 @@ To implement a reproducible and resource-efficient pipeline for:
 ## Results (Summary)
 
 - High-quality reads retained, GC content ~64%  
-- >99% reads classified as *Mycobacterium tuberculosis*  
+- 99% reads classified as *Mycobacterium tuberculosis*  
 - **706 functional variants detected**, including:  
   - 72 HIGH-impact variants  
   - 634 MODERATE-impact variants  
@@ -67,6 +67,29 @@ To implement a reproducible and resource-efficient pipeline for:
 - Subsampling reduces sensitivity to low-frequency variants  
 - Small bacterial/viral reference panels limit broad microbial detection  
 - Training-oriented, not intended for clinical or large-scale discovery
+
+---
+
+## Reproducible Environment
+
+conda env create -f environment.yml
+conda activate tbqc
+Tools Used
+FastQC
+Trimmomatic
+Seqtk
+BWA
+Samtools / Bcftools
+FreeBayes
+Centrifuge
+SnpEff / SnpSift
+MultiQC
+
+---
+
+## License
+
+This project is open for educational and research purposes.
 
 ---
 
@@ -109,23 +132,4 @@ Mtb_Pipeline_Replication/
 
 ---
 
-## Reproducible Environment
 
-conda env create -f environment.yml
-conda activate tbqc
-Tools Used
-FastQC
-Trimmomatic
-Seqtk
-BWA
-Samtools / Bcftools
-FreeBayes
-Centrifuge
-SnpEff / SnpSift
-MultiQC
-
----
-
-## License
-
-This project is open for educational and research purposes.
